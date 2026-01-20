@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+@import '@app/styles/reset.css';
+
+/* Design tokens */
+@import '@styles/tokens/color.css';
+@import '@styles/tokens/font.css';
+
+@import '@app/styles/base.css';
+
+/* Typography */
+@import '@styles/tokens/typography.css';
+
+/* Transition */
+@import '@styles/tokens/transition.css';
+
+/* shadcn CSS variables */
+@import '@styles/shadcn.css';
