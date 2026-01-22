@@ -4,7 +4,7 @@ import type { HeaderVariant } from "@shared/ui/navigations/header";
 import { createBrowserRouter, Navigate } from "react-router";
 import { OauthCallBack } from "@/pages/auth/ui/oauth-callback";
 import { CheckupResultPage } from "@/pages/checkup-result/ui/checkup-result";
-import { HealthReportDetailPage } from "@/pages/health-report/health-report-detail";
+import { HealthReportDetailPage } from "@/pages/health-report-detail/ui/health-report-detail";
 import { HealthTipPage } from "@/pages/health-tip/ui/health-tip";
 import { HealthTipDetailPage } from "@/pages/health-tip/ui/health-tip-detail";
 import { HomePage } from "@/pages/home/ui/home";
@@ -29,7 +29,6 @@ export const router = createBrowserRouter([
 		path: ROUTE_PATH.LOGIN,
 		element: <LoginPage />,
 	},
-	//
 	{
 		path: ROUTE_PATH.SIGNUP,
 		element: <Signup />,
@@ -67,7 +66,7 @@ export const router = createBrowserRouter([
 						} satisfies RouteHandle,
 					},
 					{
-						path: ROUTE_PATH.HEALTH_MENU_DETAIL,
+						path: ROUTE_PATH.HEALTH_DIET_DETAIL,
 						element: <MenuDetailPage />,
 						handle: {
 							header: "back",
@@ -75,7 +74,7 @@ export const router = createBrowserRouter([
 						} satisfies RouteHandle,
 					},
 					{
-						path: ROUTE_PATH.HEALTH_MENU,
+						path: ROUTE_PATH.HEALTH_DIET,
 						element: <HealthMenuPage />,
 						handle: {
 							header: "back",

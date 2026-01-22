@@ -1,5 +1,8 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
+import { ROUTE_PATH } from "@/app/routes/paths";
 import { useHealthTipList } from "@/pages/health-tip/apis/queries/use-health-tip-list";
+import { useInfiniteScroll } from "@/shared/libs/use-infinite-scroll";
 import CardTip from "@/shared/ui/cards/card-tip";
 import Chip from "@/shared/ui/chips/chip";
 
@@ -20,60 +23,45 @@ interface HealthTipListProps {
 }
 
 const HealthTipList = ({ selectedChip }: HealthTipListProps) => {
+	const navigate = useNavigate();
 	const hashtagName = selectedChip === "전체" ? undefined : selectedChip;
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
 		useHealthTipList({ hashtagName });
+
+	const bottomRef = useInfiniteScroll({
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	});
 
 	const tips = useMemo(
 		() => (data?.pages ?? []).flatMap((pageData) => pageData.result ?? []),
 		[data],
 	);
 
-	const bottomRef = useRef<HTMLDivElement | null>(null);
-	const hasNextPageRef = useRef(hasNextPage);
-	const isFetchingNextPageRef = useRef(isFetchingNextPage);
-
-	useEffect(() => {
-		hasNextPageRef.current = hasNextPage;
-	}, [hasNextPage]);
-
-	useEffect(() => {
-		isFetchingNextPageRef.current = isFetchingNextPage;
-	}, [isFetchingNextPage]);
-
-	useEffect(() => {
-		const bottom = bottomRef.current;
-
-		if (!bottom) return;
-
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const first = entries[0];
-				if (!first?.isIntersecting) return;
-				if (!hasNextPageRef.current) return;
-				if (isFetchingNextPageRef.current) return;
-
-				void fetchNextPage();
-			},
-			{
-				root: null,
-				rootMargin: "0px",
-				threshold: 1,
-			},
-		);
-
-		observer.observe(bottom);
-		return () => observer.disconnect();
-	}, [fetchNextPage]);
-
 	return (
 		<section className="px-[2rem] py-[1.2rem]">
 			<ul className="flex flex-col gap-[1.2rem]">
-				{tips.map((tip) => (
-					<li key={tip.id}>
-						<CardTip more>{tip.title}</CardTip>
-					</li>
-				))}
+				{tips.map((tip) => {
+					const healthTipId = tip.id ?? "";
+
+					return (
+						<li key={healthTipId}>
+							<CardTip
+								onClick={() =>
+									navigate(
+										`${ROUTE_PATH.HEALTH_TIP_DETAIL.replace(
+											":healthTipId",
+											healthTipId,
+										)}`,
+									)
+								}
+							>
+								{tip.title}
+							</CardTip>
+						</li>
+					);
+				})}
 
 				<li aria-hidden="true">
 					<div ref={bottomRef} className={hasNextPage ? "h-px" : "h-0"} />
