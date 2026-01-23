@@ -6,8 +6,8 @@ import { HealthTipBackground } from "@/shared/assets/svg";
 import { NaviRow } from "@/shared/ui/navigations/navi-row";
 import { NaviRowSmall } from "@/shared/ui/navigations/navi-row-small";
 import { Ticker } from "@/shared/ui/ticker/ticker";
-import { useRecommendedMeal } from "../apis/queries/use-recommended-meals";
-import { useTicker } from "../apis/queries/use-ticker";
+import { useRecommendedMeal } from "../../apis/queries/use-recommended-meals";
+import { useTicker } from "../../apis/queries/use-ticker";
 
 interface HealthInfoPageProps {
 	userInfo: MemberInfoResponse | undefined;
@@ -27,7 +27,7 @@ const HealthTipTicker = () => {
 };
 
 const DEFAULT_DIET_TITLE = "허혈성 심장질환";
-const DEFAULT_DIET_ID = "802267973184311798";
+const DEFAULT_DIET_ID = "802517378946048511";
 
 const HealthInfoPage = ({ userInfo, isPending }: HealthInfoPageProps) => {
 	const displayName = isPending ? "-" : (userInfo?.name ?? "-");
