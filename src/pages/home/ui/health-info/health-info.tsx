@@ -27,7 +27,41 @@ const HealthTipTicker = () => {
 };
 
 const DEFAULT_DIET_TITLE = "허혈성 심장질환";
-const DEFAULT_DIET_ID = "802517378946048511";
+const DEFAULT_DIET_ID = "821008481726226994";
+
+const LoadingDietCard = () => {
+	return (
+		<article className="rounded-[12px] bg-white">
+			<div className="p-[1.2rem_1.2rem_0.4rem_1.2rem]">
+				<NaviRow label="건강 식단" to={ROUTE_PATH.HEALTH_DIET} />
+			</div>
+
+			<div className="relative">
+				<img
+					src={cardDietBg}
+					alt="식단 이미지"
+					className="absolute inset-0 z-0 h-full w-full"
+				/>
+				<div className="relative z-10 p-[2rem]">
+					<p className="body01-sb-12 text-gray-700">
+						맞춤 식단을 준비 중이에요
+					</p>
+					<p className="head04-m-16 mt-[0.8rem] text-shimmer">
+						건강 상태를 확인하고 있어요
+					</p>
+				</div>
+			</div>
+
+			<div className="p-[1rem]">
+				<div className="flex w-full items-center justify-between rounded-[0.4rem] px-[0.8rem] py-[0.4rem] text-gray-600">
+					<span className="body04-r-14 text-left">
+						추천 식단 정보를 불러오는 중이에요
+					</span>
+				</div>
+			</div>
+		</article>
+	);
+};
 
 const HealthInfoPage = ({ userInfo, isPending }: HealthInfoPageProps) => {
 	const displayName = isPending ? "-" : (userInfo?.name ?? "-");
@@ -37,65 +71,72 @@ const HealthInfoPage = ({ userInfo, isPending }: HealthInfoPageProps) => {
 	});
 
 	// 검진결과 있음 + mealData 있음: 실제 데이터 표시
-	// 검진결과 있음 + mealData 없음 (에러/빈 응답): "-" 표시
+	// 검진결과 있음 + mealData 없음 (gpt 에러 등으로 에러/빈 응답): 기본 식단 표시
 	// 검진결과 없음: 기본 식단 표시
 	const dietLabel = hasHealthReport
-		? (mealData?.baseDietTitle ?? "-")
+		? (mealData?.baseDietTitle ?? DEFAULT_DIET_TITLE)
 		: DEFAULT_DIET_TITLE;
 	const dietId = hasHealthReport
-		? (mealData?.baseDietDocumentId ?? "")
+		? (mealData?.baseDietDocumentId ?? DEFAULT_DIET_ID)
 		: DEFAULT_DIET_ID;
 
 	return (
 		<div className="flex w-full flex-col gap-[2rem] px-[2rem] pt-[2.4rem]">
 			{/* 건강 식단 */}
-			<article className="rounded-[12px] bg-white">
-				<div className="p-[1.2rem_1.2rem_0.4rem_1.2rem]">
-					<NaviRow label="건강 식단" to={ROUTE_PATH.HEALTH_DIET} />
-				</div>
-
-				<div className="relative">
-					<img
-						src={cardDietBg}
-						alt="식단 이미지"
-						className="absolute inset-0 z-0 h-full w-full"
-					/>
-					<div className="relative z-10 p-[2rem]">
-						{!hasHealthReport ? (
-							<>
-								<p className="head04-m-16 mt-[0.8rem] text-gray-900">
-									검진결과를 추가하고
-								</p>
-								<p className="head04-m-16 mt-[0.8rem] text-gray-900">
-									맞춤 식단을 추천 받아보세요!
-								</p>
-							</>
-						) : (
-							<>
-								<p className="body01-sb-12 text-gray-700">
-									{displayName}님 맞춤 식단
-								</p>
-								{isMealPending ? (
-									<p className="head04-m-16 mt-[0.8rem] text-shimmer">
-										AI가 요리를 찾는 중이에요
-									</p>
-								) : (
-									<p className="head04-m-16 mt-[0.8rem] text-gray-900">
-										{mealData?.meal ?? "-"}
-									</p>
-								)}
-							</>
-						)}
+			{isPending ? (
+				<LoadingDietCard />
+			) : (
+				<article className="rounded-[12px] bg-white">
+					<div className="p-[1.2rem_1.2rem_0.4rem_1.2rem]">
+						<NaviRow label="건강 식단" to={ROUTE_PATH.HEALTH_DIET} />
 					</div>
-				</div>
 
-				<div className="p-[1rem]">
-					<NaviRowSmall
-						label={dietLabel}
-						to={ROUTE_PATH.HEALTH_DIET_DETAIL.replace(":healthDietId", dietId)}
-					/>
-				</div>
-			</article>
+					<div className="relative">
+						<img
+							src={cardDietBg}
+							alt="식단 이미지"
+							className="absolute inset-0 z-0 h-full w-full"
+						/>
+						<div className="relative z-10 p-[2rem]">
+							{!hasHealthReport ? (
+								<>
+									<p className="head04-m-16 mt-[0.8rem] text-gray-900">
+										검진결과를 추가하고
+									</p>
+									<p className="head04-m-16 mt-[0.8rem] text-gray-900">
+										맞춤 식단을 추천 받아보세요!
+									</p>
+								</>
+							) : (
+								<>
+									<p className="body01-sb-12 text-gray-700">
+										{displayName}님 맞춤 식단
+									</p>
+									{isMealPending ? (
+										<p className="head04-m-16 mt-[0.8rem] text-shimmer">
+											AI가 요리를 찾는 중이에요
+										</p>
+									) : (
+										<p className="head04-m-16 mt-[0.8rem] text-gray-900">
+											{mealData?.meal ?? "맞춤 식단을 추천받지 못했어요"}
+										</p>
+									)}
+								</>
+							)}
+						</div>
+					</div>
+
+					<div className="p-[1rem]">
+						<NaviRowSmall
+							label={dietLabel}
+							to={ROUTE_PATH.HEALTH_DIET_DETAIL.replace(
+								":healthDietId",
+								dietId,
+							)}
+						/>
+					</div>
+				</article>
+			)}
 
 			{/* 생활 속 건강 팁 */}
 			<article className="overflow-hidden rounded-[12px] bg-white">
